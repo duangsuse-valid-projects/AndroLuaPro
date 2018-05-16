@@ -1,8 +1,0 @@
-# Gradle
-.gradle
-.externalNativeBuild
-/build/
-/local.properties
-
-# IDEA
-.idea/workspace.xml
