@@ -1,0 +1,10 @@
+# NOTE: Please don't use this config, it's currently not supported!
+language: android
+install: ./gradlew release
+android:
+  components:
+    - platform-tools
+    - tools
+    - build-tools-21.1.1
+    - android-21
+    - extra
