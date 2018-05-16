@@ -1,5 +1,8 @@
 package com.luajava;
 
+import java.util.*;
+import java.io.*;
+
 import com.luajava.*;
 
 public class LuaStack {

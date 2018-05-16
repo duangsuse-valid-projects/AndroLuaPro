@@ -1,5 +1,8 @@
 package com.myopicmobile.textwarrior.android;
 
+import java.util.*;
+import java.io.*;
+
 import android.content.*;
 import android.content.res.*;
 import android.graphics.drawable.*;

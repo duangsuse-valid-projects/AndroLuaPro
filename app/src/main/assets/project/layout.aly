@@ -1,11 +1,11 @@
 {
   LinearLayout,
-  layout_width="fill",
-  orientation="vertical",
+  layout_width = "fill",
+  orientation = "vertical",
   {
     ListView,
-    id="plist",
-    layout_width="fill",
-    fastScrollEnabled=true
+    id = "plist",
+    layout_width = "fill",
+    fastScrollEnabled = true
   },
 }

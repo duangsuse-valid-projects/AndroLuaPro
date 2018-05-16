@@ -1,10 +1,10 @@
 {
   LinearLayout,
-  layout_width="fill",
-  orientation="vertical",
+  layout_width = "fill",
+  orientation = "vertical",
   {
     ListView,
-    id="plist",
-    layout_width="fill"
-  },
+    id = "plist",
+    layout_width = "fill"
+  }
 }

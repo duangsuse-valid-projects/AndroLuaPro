@@ -1,5 +1,8 @@
 package android.app;
 
+import java.util.*;
+import java.io.*;
+
 import android.content.*;
 import android.graphics.drawable.*;
 import android.view.*;

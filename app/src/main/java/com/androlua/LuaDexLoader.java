@@ -1,5 +1,8 @@
 package com.androlua;
 
+import java.util.*;
+import java.io.*;
+
 import android.content.*;
 import android.content.res.*;
 import com.luajava.*;

@@ -24,6 +24,9 @@
 
 package com.luajava;
 
+import java.util.*;
+import java.io.*;
+
 /**
  * This class represents a Lua object of any type. A LuaObject is constructed by a {@link LuaState} object using one of
  * the four methods:

@@ -1,5 +1,8 @@
 package com.luajava;
 
+import java.util.*;
+import java.io.*;
+
 public class LuaList extends LuaObject implements List {
 
   protected LuaList(LuaState L, String globalName) {

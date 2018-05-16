@@ -1,5 +1,8 @@
 package com.androlua;
 
+import java.util.*;
+import java.io.*;
+
 import dalvik.system.*;
 
 public class LuaDexClassLoader extends DexClassLoader {

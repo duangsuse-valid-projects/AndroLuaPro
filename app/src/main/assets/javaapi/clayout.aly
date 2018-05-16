@@ -4,19 +4,19 @@
     LinearLayout;
     {
       EditText;
-      id="edit";
-      singleLine=true;
-      layout_weight="1";
-      layout_width="fill";
+      id = "edit";
+      singleLine = true;
+      layout_weight = "1";
+      layout_width = "fill";
     };
-   layout_width="fill";
+    layout_width = "fill";
   };
   {
     ListView;
-    id="clist";
-    FastScrollEnabled=true;
-    layout_width="fill";
-    items=classes;
+    id = "clist";
+    FastScrollEnabled = true;
+    layout_width = "fill";
+    items = classes;
   };
-  orientation="vertical";
+  orientation = "vertical";
 };

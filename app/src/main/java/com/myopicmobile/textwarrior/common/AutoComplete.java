@@ -1,5 +1,8 @@
 package com.myopicmobile.textwarrior.common;
 
+import java.util.*;
+import java.io.*;
+
 import android.text.*;
 import android.widget.*;
 import android.widget.MultiAutoCompleteTextView.*;

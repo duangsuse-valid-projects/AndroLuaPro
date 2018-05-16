@@ -8,6 +8,9 @@
  */
 package com.myopicmobile.textwarrior.common;
 
+import java.util.*;
+import java.io.*;
+
 import android.util.*;
 
 import java.util.ArrayList;

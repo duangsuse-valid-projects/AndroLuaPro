@@ -14,6 +14,8 @@ Lua __5.3__ for __Android__ __Pro__, modified by duangsuse to make a *disturbed*
 
 > 这给 `AndroLua+ 3.1.0` 的更新增加了难度。不过首先在这里 __duangsuse 维护的__ `Androluna` 不会在意与之前 __Nirenr__ 版本的 __兼容问题__
 
+> 另外 duangsuse 也没有太多时间维护这个项目，毕竟 [GeekApk](https://geekapk.org) 依然在开发中
+
 ## Updates
 
 ### ﻿2.0

@@ -1,7 +1,11 @@
 package android.widget;
 
+import java.util.*;
+import java.io.*;
+
 import android.content.*;
 import android.util.*;
+import android.R.*;
 import com.androlua.*;
 
 public class FootView extends RelativeLayout {

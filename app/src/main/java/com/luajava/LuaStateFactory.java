@@ -24,6 +24,9 @@
 
 package com.luajava;
 
+import java.util.*;
+import java.io.*;
+
 /**
  * This class is responsible for instantiating new LuaStates.
  * When a new LuaState is instantiated it is put into a List

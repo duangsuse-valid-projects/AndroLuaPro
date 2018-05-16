@@ -8,6 +8,8 @@ import android.view.animation.*;
 import android.webkit.*;
 import android.widget.*;
 import com.androlua.*;
+import com.androlua.R.*;
+import android.util.Timer;
 
 
 /**

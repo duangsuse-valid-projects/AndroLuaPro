@@ -4,18 +4,18 @@
     LinearLayout;
     {
       EditText;
-      id="medit";
-      singleLine=true;
-      layout_weight="1";
-      layout_width="fill";
+      id = "medit";
+      singleLine = true;
+      layout_weight = "1";
+      layout_width = "fill";
     };
-    layout_width="fill";
+    layout_width = "fill";
   };
   {
     ListView;
-    id="mlist";
-    FastScrollEnabled=true;
-    layout_width="fill";
+    id = "mlist";
+    FastScrollEnabled = true;
+    layout_width = "fill";
   };
-  orientation="vertical";
+  orientation = "vertical";
 };

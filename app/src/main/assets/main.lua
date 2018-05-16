@@ -15,10 +15,10 @@ require "layout"
 activity.setTitle('AndroLua+')
 
 
-function onVersionChanged(n,o)
-  local dlg=AlertDialogBuilder(activity)
-  local title="更新"..o..">"..n
-  local msg=[[
+function onVersionChanged(n, o)
+  local dlg = AlertDialogBuilder(activity)
+  local title = "更新" .. o .. ">" .. n
+  local msg = [[
     3.2.5.20161130
     去除无用权限。
     优化编辑器。
@@ -173,89 +173,87 @@ function onVersionChanged(n,o)
     更多请参考帮助
 
   ]]
-  if o=="" then
-    title="欢迎使用AndroLua+ "..n
-    msg=[[
+  if o == "" then
+    title = "欢迎使用AndroLua+ " .. n
+    msg = [[
     AndroLua+是由nirenr开发的在安卓使用Lua语言开发应用的工具，该项目基于开源项目luajava和AndroLua优化加强，修复了原版的bug，并加入了很多新的特性，使开发更加简单高效，使用该软件完全免费，如果你喜欢这个项目欢迎捐赠或者宣传他。
     用户协议
     作者不对使用该软件产生的任何直接或间接损失负责。
     勿使用该程序编写恶意程序以损害他人。
     继续使用表示你已知晓并同意该协议。
     
-]]..msg
-    end
+]] .. msg
+  end
   dlg.setTitle(title)
 
   dlg.setMessage(msg)
-  dlg.setPositiveButton("确定",nil)
-  dlg.setNegativeButton("帮助",{onClick=func.help})
-  dlg.setNeutralButton("捐赠",{onClick=func.donation})
+  dlg.setPositiveButton("确定", nil)
+  dlg.setNegativeButton("帮助", { onClick = func.help })
+  dlg.setNeutralButton("捐赠", { onClick = func.donation })
   dlg.show()
 end
 
 
-
---activity.setTheme(android.R.style.Theme_Holo_Light)
 local version = Build.VERSION.SDK_INT;
-local h=tonumber(os.date("%H"))
+local h = tonumber(os.date("%H"))
 if version >= 21 then
-  if h<=6 or h>=22 then
+  if h <= 6 or h >= 22 then
     activity.setTheme(android.R.style.Theme_Material)
   else
     activity.setTheme(android.R.style.Theme_Material_Light)
   end
 else
-  if h<=6 or h>=22 then
+  if h <= 6 or h >= 22 then
     activity.setTheme(android.R.style.Theme_Holo)
   else
     activity.setTheme(android.R.style.Theme_Holo_Light)
   end
 end
 local theme
-if h<=6 or h>=22 then
-  theme=activity.getLuaExtDir("fonts").."/night.lua"
+if h <= 6 or h >= 22 then
+  theme = activity.getLuaExtDir("fonts") .. "/night.lua"
 else
-  theme=activity.getLuaExtDir("fonts").."/day.lua"
+  theme = activity.getLuaExtDir("fonts") .. "/day.lua"
 end
-local p={}
-local e=pcall(loadfile(theme,"bt",p))
+local p = {}
+local e = pcall(loadfile(theme, "bt", p))
 if e then
-  for k,v in pairs(p) do
-    layout.main[2][k]=v
+  for k, v in pairs(p) do
+    layout.main[2][k] = v
   end
 end
 activity.getWindow().setSoftInputMode(0x10)
 
 --activity.getActionBar().show()
-history={}
-luahist=luajava.luadir.."/lua.hist"
-luadir=luajava.luaextdir.."/" or "/sdcard/androlua/"
-luaconf=luajava.luadir.."/lua.conf"
-luaproj=luajava.luadir.."/lua.proj"
-pcall(dofile,luaconf)
-pcall(dofile,luahist)
-luapath=luapath or luadir.."new.lua"
-luadir=luapath:match("^(.-)[^/]+$")
-pcall(dofile,luaproj)
-luaproject=luaproject
+history = {}
+luahist = luajava.luadir .. "/lua.hist"
+luadir = luajava.luaextdir .. "/" or "/sdcard/androlua/"
+luaconf = luajava.luadir .. "/lua.conf"
+luaproj = luajava.luadir .. "/lua.proj"
+pcall(dofile, luaconf)
+pcall(dofile, luahist)
+luapath = luapath or luadir .. "new.lua"
+luadir = luapath:match("^(.-)[^/]+$")
+pcall(dofile, luaproj)
+luaproject = luaproject
 if luaproject then
-  local p={}
-  local e=pcall(loadfile(luaproject.."init.lua","bt",p))
+  local p = {}
+  local e = pcall(loadfile(luaproject .. "init.lua", "bt", p))
   if e then
     activity.setTitle(p.appname)
-    Toast.makeText(activity, "打开工程."..p.appname, Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "打开工程." .. p.appname, Toast.LENGTH_SHORT).show()
   end
 end
 
 activity.getActionBar().setDisplayShowHomeEnabled(false)
-luabindir=luajava.luaextdir.."/bin/"
-code=[===[
+luabindir = luajava.luaextdir .. "/bin/"
+code = [===[
 require "import"
 import "android.widget.*"
 import "android.view.*"
 
 ]===]
-pcode=[[
+pcode = [[
 require "import"
 import "android.app.*"
 import "android.os.*"
@@ -268,7 +266,7 @@ activity.setContentView(loadlayout(layout))
 ]]
 
 
-lcode=[[
+lcode = [[
 {
   LinearLayout,
   orientation="vertical",
@@ -281,7 +279,7 @@ lcode=[[
   },
 }
 ]]
-upcode=[[
+upcode = [[
 user_permission={
   "INTERNET",
   "WRITE_EXTERNAL_STORAGE",
@@ -289,125 +287,184 @@ user_permission={
 ]]
 
 
-local BitmapDrawable=luajava.bindClass("android.graphics.drawable.BitmapDrawable")
-m={
-  {MenuItem,
-    title="运行",
-    id="play",
-    icon="play",},
-  {MenuItem,
-    title="撤销",
-    id="undo",
-    icon="undo",},
-  {MenuItem,
-    title="重做",
-    id="redo",
-    icon="redo",},
-  {MenuItem,
-    title="打开",
-    id="file_open",},
-  {MenuItem,
-    title="最近",
-    id="file_history",},
-  {SubMenu,
-    title="文件...",
-    {MenuItem,
-      title="保存",
-      id="file_save",},
-    {MenuItem,
-      title="新建",
-      id="file_new",},
-    {MenuItem,
-      title="编译",
-      id="file_build",},
+local BitmapDrawable = luajava.bindClass("android.graphics.drawable.BitmapDrawable")
+m = {
+  {
+    MenuItem,
+    title = "运行",
+    id = "play",
+    icon = "play",
   },
-  {SubMenu,
-    title="工程...",
-    {MenuItem,
-      title="打开",
-      id="project_open",},
-    {MenuItem,
-      title="打包",
-      id="project_build",},
-    {MenuItem,
-      title="新建",
-      id="project_create",},
-    {MenuItem,
-      title="导出",
-      id="project_export",},
-    {MenuItem,
-      title="属性",
-      id="project_info",},
+  {
+    MenuItem,
+    title = "撤销",
+    id = "undo",
+    icon = "undo",
   },
-  {SubMenu,
-    title="代码...",
-    {MenuItem,
-      title="格式化",
-      id="code_format",},
-    {MenuItem,
-      title="查错",
-      id="code_check",},
+  {
+    MenuItem,
+    title = "重做",
+    id = "redo",
+    icon = "redo",
   },
-  {SubMenu,
-    title="转到...",
-    {MenuItem,
-      title="搜索",
-      id="goto_seach",},
-    {MenuItem,
-      title="转到",
-      id="goto_line",},
-    {MenuItem,
-      title="导航",
-      id="goto_func",},
+  {
+    MenuItem,
+    title = "打开",
+    id = "file_open",
   },
-  {MenuItem,
-    title="插件...",
-    id="plugin",},
-  {SubMenu,
-    title="更多...",
-    {MenuItem,
-      title="布局助手",
-      id="more_helper",},
-    {MenuItem,
-      title="日志",
-      id="more_logcat",},
-    {MenuItem,
-      title="Java浏览器",
-      id="more_java",},
-    {MenuItem,
-      title="帮助",
-      id="more_help",},
-    {MenuItem,
-      title="手册",
-      id="more_manual",},
-    {MenuItem,
-      title="支持作者",
-      id="more_donation",},
-    {MenuItem,
-      title="联系作者",
-      id="more_qq",},
-    {MenuItem,
-      title="关于",
-      id="more_about",},
+  {
+    MenuItem,
+    title = "最近",
+    id = "file_history",
+  },
+  {
+    SubMenu,
+    title = "文件...",
+    {
+      MenuItem,
+      title = "保存",
+      id = "file_save",
+    },
+    {
+      MenuItem,
+      title = "新建",
+      id = "file_new",
+    },
+    {
+      MenuItem,
+      title = "编译",
+      id = "file_build",
+    },
+  },
+  {
+    SubMenu,
+    title = "工程...",
+    {
+      MenuItem,
+      title = "打开",
+      id = "project_open",
+    },
+    {
+      MenuItem,
+      title = "打包",
+      id = "project_build",
+    },
+    {
+      MenuItem,
+      title = "新建",
+      id = "project_create",
+    },
+    {
+      MenuItem,
+      title = "导出",
+      id = "project_export",
+    },
+    {
+      MenuItem,
+      title = "属性",
+      id = "project_info",
+    },
+  },
+  {
+    SubMenu,
+    title = "代码...",
+    {
+      MenuItem,
+      title = "格式化",
+      id = "code_format",
+    },
+    {
+      MenuItem,
+      title = "查错",
+      id = "code_check",
+    },
+  },
+  {
+    SubMenu,
+    title = "转到...",
+    {
+      MenuItem,
+      title = "搜索",
+      id = "goto_seach",
+    },
+    {
+      MenuItem,
+      title = "转到",
+      id = "goto_line",
+    },
+    {
+      MenuItem,
+      title = "导航",
+      id = "goto_func",
+    },
+  },
+  {
+    MenuItem,
+    title = "插件...",
+    id = "plugin",
+  },
+  {
+    SubMenu,
+    title = "更多...",
+    {
+      MenuItem,
+      title = "布局助手",
+      id = "more_helper",
+    },
+    {
+      MenuItem,
+      title = "日志",
+      id = "more_logcat",
+    },
+    {
+      MenuItem,
+      title = "Java浏览器",
+      id = "more_java",
+    },
+    {
+      MenuItem,
+      title = "帮助",
+      id = "more_help",
+    },
+    {
+      MenuItem,
+      title = "手册",
+      id = "more_manual",
+    },
+    {
+      MenuItem,
+      title = "支持作者",
+      id = "more_donation",
+    },
+    {
+      MenuItem,
+      title = "联系作者",
+      id = "more_qq",
+    },
+    {
+      MenuItem,
+      title = "关于",
+      id = "more_about",
+    },
   },
 }
-optmenu={}
+optmenu = {}
 function onCreateOptionsMenu(menu)
-  loadmenu(menu,m,optmenu)
+  loadmenu(menu, m, optmenu)
 end
 
 function switch(s)
   return function(t)
-    local f=t[s]
+    local f = t[s]
     if not f then
-      for k,v in pairs(t) do
+      for k, v in pairs(t) do
         if s.equals(k) then
-          f=v
+          f = v
           break
         end
       end
     end
-    f=f or t.default
+    f = f or t.default
     return f and f()
   end
 end
@@ -418,11 +475,11 @@ end
 
 
 
-luaprojectdir=luajava.luaextdir.."/project/"
+luaprojectdir = luajava.luaextdir .. "/project/"
 function create_project()
-  local appname=project_appName.getText().toString()
-  local packagename=project_packageName.getText().toString()
-  local f=File(luaprojectdir..appname)
+  local appname = project_appName.getText().toString()
+  local packagename = project_packageName.getText().toString()
+  local f = File(luaprojectdir .. appname)
   if f.exists() then
     print("工程已存在")
     return
@@ -431,12 +488,12 @@ function create_project()
     print("工程创建失败")
     return
   end
-  luadir=luaprojectdir..appname.."/"
-  write(luadir.."init.lua",string.format("appname=\"%s\"\nappver=\"1.0\"\npackagename=\"%s\"\n%s",appname,packagename,upcode))
-  write(luadir.."main.lua",pcode)
-  write(luadir.."layout.aly",lcode)
+  luadir = luaprojectdir .. appname .. "/"
+  write(luadir .. "init.lua", string.format("appname=\"%s\"\nappver=\"1.0\"\npackagename=\"%s\"\n%s", appname, packagename, upcode))
+  write(luadir .. "main.lua", pcode)
+  write(luadir .. "layout.aly", lcode)
   project_dlg.hide()
-  luapath=luadir.."main.lua"
+  luapath = luadir .. "main.lua"
   read(luapath)
 end
 
@@ -446,106 +503,106 @@ end
 
 function callback(s)
   bin_dlg.hide()
-  bin_dlg.Message=""
+  bin_dlg.Message = ""
   if not s:find("成功") then
     create_error_dlg()
-    error_dlg.Message=s
+    error_dlg.Message = s
     error_dlg.show()
   end
 end
 
 function reopen(path)
-  local f=io.open(path,"r")
+  local f = io.open(path, "r")
   if f then
-    local str=f:read("*all")
-    if tostring(editor.getText())~=str then
-      editor.setText(str,true)
+    local str = f:read("*all")
+    if tostring(editor.getText()) ~= str then
+      editor.setText(str, true)
     end
     f:close()
   end
 end
 
 function read(path)
-  
-  local f=io.open(path,"r")
-  if f==nil then
+
+  local f = io.open(path, "r")
+  if f == nil then
     --Toast.makeText(activity, "打开文件出错."..path, Toast.LENGTH_LONG ).show()
     error()
     return
   end
-  local str=f:read("*all")
+  local str = f:read("*all")
   f:close()
-  if string.byte(str,1)==0x1b then
-    Toast.makeText(activity, "不能打开已编译文件."..path, Toast.LENGTH_LONG ).show()
-    return 
+  if string.byte(str, 1) == 0x1b then
+    Toast.makeText(activity, "不能打开已编译文件." .. path, Toast.LENGTH_LONG).show()
+    return
   end
   editor.setText(str)
-  
-  activity.getActionBar().setSubtitle(".."..path:match("(/[^/]+/[^/]+)$"))
-  luapath=path
+
+  activity.getActionBar().setSubtitle(".." .. path:match("(/[^/]+/[^/]+)$"))
+  luapath = path
   if history[luapath] then
     editor.setSelection(history[luapath])
   end
-  table.insert(history,1,luapath)
-  for n=2,#history do
-    if n>50 then
-      history[n]=nil
-    elseif history[n]==luapath then
-      table.remove(history,n)
-     end
+  table.insert(history, 1, luapath)
+  for n = 2, #history do
+    if n > 50 then
+      history[n] = nil
+    elseif history[n] == luapath then
+      table.remove(history, n)
+    end
   end
-  write(luaconf,string.format("luapath=%q",path))
-  if luaproject and path:find(luaproject,1,true) then
+  write(luaconf, string.format("luapath=%q", path))
+  if luaproject and path:find(luaproject, 1, true) then
     --Toast.makeText(activity, "打开文件."..path, Toast.LENGTH_SHORT ).show()
     return
   end
 
-  local dir=luadir
-  local p={}
-  local e=pcall(loadfile(dir.."init.lua","bt",p))
+  local dir = luadir
+  local p = {}
+  local e = pcall(loadfile(dir .. "init.lua", "bt", p))
   while not e do
-    dir,n=dir:gsub("[^/]+/$","")
-    if n==0 then
+    dir, n = dir:gsub("[^/]+/$", "")
+    if n == 0 then
       break
-      end
-    e=pcall(loadfile(dir.."init.lua","bt",p))
+    end
+    e = pcall(loadfile(dir .. "init.lua", "bt", p))
   end
 
   if e then
     activity.setTitle(p.appname)
-    luaproject=dir
-    write(luaproj,string.format("luaproject=%q",luaproject))
+    luaproject = dir
+    write(luaproj, string.format("luaproject=%q", luaproject))
     --Toast.makeText(activity, "打开工程."..p.appname, Toast.LENGTH_SHORT ).show()
   else
     activity.setTitle("AndroLua+")
-    luaproject=nil
-    write(luaproj,"luaproject=nil")
+    luaproject = nil
+    write(luaproj, "luaproject=nil")
     --Toast.makeText(activity, "打开文件."..path, Toast.LENGTH_SHORT ).show()
   end
 end
 
-function write(path,str)
-  local sw=io.open(path,"wb")
+function write(path, str)
+  local sw = io.open(path, "wb")
   if sw then
     sw:write(str)
     sw:close()
   else
-    Toast.makeText(activity, "保存失败."..path, Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "保存失败." .. path, Toast.LENGTH_SHORT).show()
   end
   return str
 end
 
 function save()
-  history[luapath]=editor.getSelectionEnd()
-  local str=""
-  local f=io.open(luapath,"r")
+  history[luapath] = editor.getSelectionEnd()
+  local str = ""
+  local f = io.open(luapath, "r")
   if f then
-    str=f:read("*all")
+    str = f:read("*all")
     f:close()
   end
-  local src=editor.getText().toString()
-  if src~=str then
-    write(luapath,src)
+  local src = editor.getText().toString()
+  if src ~= str then
+    write(luapath, src)
   end
   return src
 end
@@ -555,61 +612,61 @@ function click(s)
 end
 
 function create_lua()
-  luapath=luadir.. create_e.getText().toString()..".lua"
-  if not pcall(read,luapath) then
-    f=io.open(luapath,"a")
+  luapath = luadir .. create_e.getText().toString() .. ".lua"
+  if not pcall(read, luapath) then
+    f = io.open(luapath, "a")
     f:write(code)
     f:close()
     editor.setText(code)
-    write(luaconf,string.format("luapath=%q",luapath))
-    Toast.makeText(activity, "新建文件."..luapath, Toast.LENGTH_SHORT ).show()
+    write(luaconf, string.format("luapath=%q", luapath))
+    Toast.makeText(activity, "新建文件." .. luapath, Toast.LENGTH_SHORT).show()
   else
-    Toast.makeText(activity, "打开文件."..luapath, Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "打开文件." .. luapath, Toast.LENGTH_SHORT).show()
   end
-  write(luaconf,string.format("luapath=%q",luapath))
-  activity.getActionBar().setSubtitle(".."..luapath:match("(/[^/]+/[^/]+)$"))
+  write(luaconf, string.format("luapath=%q", luapath))
+  activity.getActionBar().setSubtitle(".." .. luapath:match("(/[^/]+/[^/]+)$"))
   create_dlg.hide()
 end
 
 function create_aly()
-  luapath=luadir.. create_e.getText().toString()..".aly"
-  if not pcall(read,luapath) then
-    f=io.open(luapath,"a")
+  luapath = luadir .. create_e.getText().toString() .. ".aly"
+  if not pcall(read, luapath) then
+    f = io.open(luapath, "a")
     f:write(lcode)
     f:close()
     editor.setText(lcode)
-    write(luaconf,string.format("luapath=%q",luapath))
-    Toast.makeText(activity, "新建文件."..luapath, Toast.LENGTH_SHORT ).show()
+    write(luaconf, string.format("luapath=%q", luapath))
+    Toast.makeText(activity, "新建文件." .. luapath, Toast.LENGTH_SHORT).show()
   else
-    Toast.makeText(activity, "打开文件."..luapath, Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "打开文件." .. luapath, Toast.LENGTH_SHORT).show()
   end
-  write(luaconf,string.format("luapath=%q",luapath))
-  activity.getActionBar().setSubtitle(".."..luapath:match("(/[^/]+/[^/]+)$"))
+  write(luaconf, string.format("luapath=%q", luapath))
+  activity.getActionBar().setSubtitle(".." .. luapath:match("(/[^/]+/[^/]+)$"))
   create_dlg.hide()
 end
 
 function open(p)
-  if p==luadir then
+  if p == luadir then
     return nil
   end
   if p:find("%.%./") then
-    luadir=luadir:match("(.-)[^/]+/$")
+    luadir = luadir:match("(.-)[^/]+/$")
     list(listview, luadir)
   elseif p:find("/") then
-    luadir=luadir..p
+    luadir = luadir .. p
     list(listview, luadir)
   elseif p:find("%.alp$") then
-    imports(luadir..p)
+    imports(luadir .. p)
     open_dlg.hide()
   else
-    read(luadir..p)
+    read(luadir .. p)
     open_dlg.hide()
   end
 end
 
 
 
-function sort(a,b)
+function sort(a, b)
   if string.lower(a) < string.lower(b) then
     return true
   else
@@ -618,40 +675,40 @@ function sort(a,b)
 end
 
 function adapter(t)
-  return ArrayListAdapter(activity,android.R.layout.simple_list_item_1, String(t))
+  return ArrayListAdapter(activity, android.R.layout.simple_list_item_1, String(t))
 end
 
 
-function list(v,p)
-  local f=File(p)
+function list(v, p)
+  local f = File(p)
   if not f then
     open_title.setText(p)
-    local adapter=ArrayAdapter(activity,android.R.layout.simple_list_item_1, String{})
+    local adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, String {})
     v.setAdapter(adapter)
     return
   end
 
-  local fs=f.listFiles()
-  fs=fs or String[0]
+  local fs = f.listFiles()
+  fs = fs or String[0]
   Arrays.sort(fs)
-  local t={}
-  local td={}
-  local tf={}
-  if p~="/" then
-    table.insert(td,"../")
+  local t = {}
+  local td = {}
+  local tf = {}
+  if p ~= "/" then
+    table.insert(td, "../")
   end
-  for n=0,#fs-1 do
-    local name=fs[n].getName()
+  for n = 0, #fs - 1 do
+    local name = fs[n].getName()
     if fs[n].isDirectory() then
-      table.insert(td,name.."/")
+      table.insert(td, name .. "/")
     elseif name:find("%.lua$") or name:find("%.aly$") or name:find("%.alp$") then
-      table.insert(tf,name)
+      table.insert(tf, name)
     end
   end
-  table.sort(td,sort)
-  table.sort(tf,sort)
-  for k,v in ipairs(tf) do
-    table.insert(td,v)
+  table.sort(td, sort)
+  table.sort(tf, sort)
+  for k, v in ipairs(tf) do
+    table.insert(td, v)
   end
   open_title.setText(p)
   --local adapter=ArrayAdapter(activity,android.R.layout.simple_list_item_1, String(td))
@@ -659,14 +716,14 @@ function list(v,p)
   open_dlg.setItems(td)
 end
 
-function list2(v,p)
-    local adapter=ArrayAdapter(activity,android.R.layout.simple_list_item_1, String(history))
-    v.setAdapter(adapter)
-    plist=history
+function list2(v, p)
+  local adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, String(history))
+  v.setAdapter(adapter)
+  plist = history
 end
 
 
-bin=function(luapath,appname,appver,packagename,apkpath)
+bin = function(luapath, appname, appver, packagename, apkpath)
   require "import"
   import "console"
   compile "mao"
@@ -675,16 +732,16 @@ bin=function(luapath,appname,appver,packagename,apkpath)
   import "java.io.*"
   import "mao.res.*"
   import "apksigner.*"
-  local b=byte[2^16]
-  function copy(input,output)
-    local l=input.read(b)
-    while l>1 do
-      output.write(b,0,l)
-      l=input.read(b)
+  local b = byte[2 ^ 16]
+  function copy(input, output)
+    local l = input.read(b)
+    while l > 1 do
+      output.write(b, 0, l)
+      l = input.read(b)
     end
   end
 
-  local temp=File(apkpath).getParentFile();
+  local temp = File(apkpath).getParentFile();
   if (not temp.exists()) then
 
     if (not temp.mkdirs()) then
@@ -694,175 +751,177 @@ bin=function(luapath,appname,appver,packagename,apkpath)
   end
 
 
-  local tmp=luajava.luadir.."/tmp.apk"
-  local info=activity.getApplicationInfo()
-  local ver=activity.getPackageManager().getPackageInfo(activity.getPackageName(),0).versionName
+  local tmp = luajava.luadir .. "/tmp.apk"
+  local info = activity.getApplicationInfo()
+  local ver = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName
 
   --local zip=ZipFile(info.publicSourceDir)
-  local zipFile=File(info.publicSourceDir)
-  local fis=FileInputStream(zipFile);
+  local zipFile = File(info.publicSourceDir)
+  local fis = FileInputStream(zipFile);
   local checksum = CheckedInputStream(fis, Adler32());
   local zis = ZipInputStream(BufferedInputStream(checksum));
 
-  local out=ZipOutputStream(FileOutputStream(tmp))
-  local f=File(luapath)
-  local errbuffer={}
-  replace={}
-  checked={}
+  local out = ZipOutputStream(FileOutputStream(tmp))
+  local f = File(luapath)
+  local errbuffer = {}
+  replace = {}
+  checked = {}
 
-  local libs=File(activity.ApplicationInfo.nativeLibraryDir).list()
-  libs=luajava.astable(libs)
-  for k,v in ipairs(libs) do
+  local libs = File(activity.ApplicationInfo.nativeLibraryDir).list()
+  libs = luajava.astable(libs)
+  for k, v in ipairs(libs) do
     --libs[k]="lib/armeabi/"..libs[k]
-    replace[v]=true
+    replace[v] = true
   end
 
-  local mdp=activity.Application.MdDir
+  local mdp = activity.Application.MdDir
   function getmodule(dir)
-    local mds=File(activity.Application.MdDir..dir).listFiles()
-    mds=luajava.astable(mds)
-    for k,v in ipairs(mds) do
+    local mds = File(activity.Application.MdDir .. dir).listFiles()
+    mds = luajava.astable(mds)
+    for k, v in ipairs(mds) do
       if mds[k].isDirectory() then
-        getmodule(dir..mds[k].Name.."/")
+        getmodule(dir .. mds[k].Name .. "/")
       else
-        mds[k]="lua"..dir..mds[k].Name
-        replace[mds[k]]=true
+        mds[k] = "lua" .. dir .. mds[k].Name
+        replace[mds[k]] = true
       end
     end
   end
+
   getmodule("/")
 
   function checklib(path)
     if checked[path] then
       return
     end
-    local cp,lp
-    checked[path]=true
-    local f=io.open(path)
-    local s=f:read("*a")
+    local cp, lp
+    checked[path] = true
+    local f = io.open(path)
+    local s = f:read("*a")
     f:close()
-    for m,n in s:gmatch("require *%(?\"([%w_]+)%.?([%w_]*)") do
-      cp=string.format("lib%s.so",m)
-      if n~="" then
-        lp=string.format("lua/%s/%s.lua",m,n)
+    for m, n in s:gmatch("require *%(?\"([%w_]+)%.?([%w_]*)") do
+      cp = string.format("lib%s.so", m)
+      if n ~= "" then
+        lp = string.format("lua/%s/%s.lua", m, n)
       else
-        lp=string.format("lua/%s.lua",m)
+        lp = string.format("lua/%s.lua", m)
       end
       if replace[cp] then
-        replace[cp]=false
+        replace[cp] = false
       end
       if replace[lp] then
-        checklib(mdp.."/"..m..".lua")
-        replace[lp]=false
+        checklib(mdp .. "/" .. m .. ".lua")
+        replace[lp] = false
       end
     end
-    for m,n in s:gmatch("import *\"([%w_]+)%.?([%w_]*)") do
-      cp=string.format("lib%s.so",m)
-      if n~="" then
-        lp=string.format("lua/%s/%s.lua",m,n)
+    for m, n in s:gmatch("import *\"([%w_]+)%.?([%w_]*)") do
+      cp = string.format("lib%s.so", m)
+      if n ~= "" then
+        lp = string.format("lua/%s/%s.lua", m, n)
       else
-        lp=string.format("lua/%s.lua",m)
+        lp = string.format("lua/%s.lua", m)
       end
       if replace[cp] then
-        replace[cp]=false
+        replace[cp] = false
       end
       if replace[lp] then
-        checklib(mdp.."/"..m..".lua")
-        replace[lp]=false
+        checklib(mdp .. "/" .. m .. ".lua")
+        replace[lp] = false
       end
     end
   end
 
-  replace["libluajava.so"]= false
+  replace["libluajava.so"] = false
 
-  function addDir(out,dir,f)
-    local ls=f.listFiles()
-    for n=0,#ls-1 do
-      local name=ls[n].getName()
+  function addDir(out, dir, f)
+    local ls = f.listFiles()
+    for n = 0, #ls - 1 do
+      local name = ls[n].getName()
       if name:find("%.apk$") or name:find("%.luac$") or name:find("^%.") then
       elseif name:find("%.lua$") then
-        checklib(luapath..dir..name)
-        local path,err=console.build(luapath..dir..name)
+        checklib(luapath .. dir .. name)
+        local path, err = console.build(luapath .. dir .. name)
         if path then
-          entry=ZipEntry("assets/"..dir..name)
+          entry = ZipEntry("assets/" .. dir .. name)
           out.putNextEntry(entry)
-          replace["assets/"..dir..name]=true
-          copy(FileInputStream(File(path)),out)
+          replace["assets/" .. dir .. name] = true
+          copy(FileInputStream(File(path)), out)
           os.remove(path)
         else
-          table.insert(errbuffer,err)
+          table.insert(errbuffer, err)
         end
       elseif name:find("%.aly$") then
-        local path,err=console.build_aly(luapath..dir..name)
+        local path, err = console.build_aly(luapath .. dir .. name)
         if path then
-          name=name:gsub("aly$","lua")
-          entry=ZipEntry("assets/"..dir..name)
+          name = name:gsub("aly$", "lua")
+          entry = ZipEntry("assets/" .. dir .. name)
           out.putNextEntry(entry)
-          replace["assets/"..dir..name]=true
-          copy(FileInputStream(File(path)),out)
+          replace["assets/" .. dir .. name] = true
+          copy(FileInputStream(File(path)), out)
           os.remove(path)
         else
-          table.insert(errbuffer,err)
+          table.insert(errbuffer, err)
         end
       elseif ls[n].isDirectory() then
-        addDir(out,dir..name.."/",ls[n])
+        addDir(out, dir .. name .. "/", ls[n])
       else
-        entry=ZipEntry("assets/"..dir..name)
+        entry = ZipEntry("assets/" .. dir .. name)
         out.putNextEntry(entry)
-        replace["assets/"..dir..name]=true
-        copy(FileInputStream(ls[n]),out)
+        replace["assets/" .. dir .. name] = true
+        copy(FileInputStream(ls[n]), out)
       end
     end
   end
 
   local function check(h)
     local function hash(s)
-      local l=0
-      local b={string.byte(s,1,-1)}
-      for k,v in ipairs(b) do
-        l=l+k+v
+      local l = 0
+      local b = { string.byte(s, 1, -1) }
+      for k, v in ipairs(b) do
+        l = l + k + v
       end
       return l
     end
+
     require "init"
-    for k,v in pairs(h) do
-      if hash(_G[k])~=v then
+    for k, v in pairs(h) do
+      if hash(_G[k]) ~= v then
         os.exit(0)
       end
     end
   end
 
   local function hash(s)
-    local l=0
-    local b={string.byte(s,1,-1)}
-    for k,v in ipairs(b) do
-      l=l+k+v
+    local l = 0
+    local b = { string.byte(s, 1, -1) }
+    for k, v in ipairs(b) do
+      l = l + k + v
     end
     return l
   end
 
-  local p={}
-  local e=pcall(loadfile(luapath.."init.lua","bt",p))
-  local t={}
-  table.insert(t,"\n\nlocal ____h={")
-  for k,v in pairs(p) do
-    if type(v)=="string" then
-      table.insert(t,string.format("%s=%d,",k,hash(v)))
+  local p = {}
+  local e = pcall(loadfile(luapath .. "init.lua", "bt", p))
+  local t = {}
+  table.insert(t, "\n\nlocal ____h={")
+  for k, v in pairs(p) do
+    if type(v) == "string" then
+      table.insert(t, string.format("%s=%d,", k, hash(v)))
     end
   end
-  table.insert(t,"}\n")
-  table.insert(t,string.format("loadstring(%q)(____h)\n\n",string.dump(check,true)))
-  local f1=io.open(luapath.."main.lua")
-  local s1=f1:read("a")
+  table.insert(t, "}\n")
+  table.insert(t, string.format("loadstring(%q)(____h)\n\n", string.dump(check, true)))
+  local f1 = io.open(luapath .. "main.lua")
+  local s1 = f1:read("a")
   f1:close()
   function addcheck()
-    local f=io.open(luapath.."main.lua","w")
-    f:write(s1..table.concat(t))
+    local f = io.open(luapath .. "main.lua", "w")
+    f:write(s1 .. table.concat(t))
     f:close()
   end
 
   function removecheck()
-    local f=io.open(luapath.."main.lua","w")
+    local f = io.open(luapath .. "main.lua", "w")
     f:write(s1)
     f:close()
   end
@@ -872,13 +931,13 @@ bin=function(luapath,appname,appver,packagename,apkpath)
   this.update("正在编译...");
   if f.isDirectory() then
     require "permission"
-    dofile(luapath.."init.lua")
+    dofile(luapath .. "init.lua")
     if user_permission then
-      for k,v in ipairs(user_permission) do
-        user_permission[v]=true
+      for k, v in ipairs(user_permission) do
+        user_permission[v] = true
       end
     end
-    addDir(out,"",f)
+    addDir(out, "", f)
     --[[
     local wel=File(luapath.."welcome.png")
     if wel.exists() then
@@ -888,12 +947,12 @@ bin=function(luapath,appname,appver,packagename,apkpath)
       copy(FileInputStream(wel),out)
     end
    ]]
-    local wel=File(luapath.."icon.png")
+    local wel = File(luapath .. "icon.png")
     if wel.exists() then
-      entry=ZipEntry("res/drawable/icon.png")
+      entry = ZipEntry("res/drawable/icon.png")
       out.putNextEntry(entry)
-      replace["res/drawable/icon.png"]=true
-      copy(FileInputStream(wel),out)
+      replace["res/drawable/icon.png"] = true
+      copy(FileInputStream(wel), out)
     end
   else
     return "error"
@@ -903,38 +962,38 @@ bin=function(luapath,appname,appver,packagename,apkpath)
   this.update("正在打包...");
   local entry = zis.getNextEntry();
   while entry do
-    local name=entry.getName()
-    local lib=name:match("([^/]+%.so)$")
+    local name = entry.getName()
+    local lib = name:match("([^/]+%.so)$")
     if replace[name] then
     elseif lib and replace[lib] then
     elseif name:find("^assets/") then
     else
       out.putNextEntry(entry)
       if entry.getName() == "AndroidManifest.xml" then
-        local list=ArrayList()
-        local xml=AXmlDecoder.read(list, zis)
-        local req={
-          [activity.getPackageName()]=packagename,
-          [info.nonLocalizedLabel]=appname,
-          [ver]=appver,
-          [".*\\\\.alp"]=p.path_pattern or "",
-          [".*\\\\.lua"]="",
-          [".*\\\\.luac"]="",
+        local list = ArrayList()
+        local xml = AXmlDecoder.read(list, zis)
+        local req = {
+          [activity.getPackageName()] = packagename,
+          [info.nonLocalizedLabel] = appname,
+          [ver] = appver,
+          [".*\\\\.alp"] = p.path_pattern or "",
+          [".*\\\\.lua"] = "",
+          [".*\\\\.luac"] = "",
         }
-        for n=0,list.size()-1 do
-          local v=list.get(n)
+        for n = 0, list.size() - 1 do
+          local v = list.get(n)
           if req[v] then
-            list.set(n,req[v])
+            list.set(n, req[v])
           elseif user_permission then
-            local p=v:match("%.permission%.([%w_]+)$")
+            local p = v:match("%.permission%.([%w_]+)$")
             if p and (not user_permission[p]) then
-              list.set(n,"")
+              list.set(n, "")
             end
           end
         end
-        xml.write(list,out)
+        xml.write(list, out)
       elseif not entry.isDirectory() then
-        copy(zis,out)
+        copy(zis, out)
       end
     end
     entry = zis.getNextEntry()
@@ -944,22 +1003,22 @@ bin=function(luapath,appname,appver,packagename,apkpath)
   out.closeEntry()
   out.close()
 
-  if #errbuffer==0 then
+  if #errbuffer == 0 then
     this.update("正在签名...");
-    Signer.sign(tmp,apkpath)
+    Signer.sign(tmp, apkpath)
     os.remove(tmp)
     import "android.net.*"
     import "android.content.*"
     i = Intent(Intent.ACTION_VIEW);
-    i.setDataAndType(Uri.parse("file://"..apkpath), "application/vnd.android.package-archive");
+    i.setDataAndType(Uri.parse("file://" .. apkpath), "application/vnd.android.package-archive");
     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     this.update("正在打开...");
     activity.startActivity(i);
-    return "打包成功:"..apkpath
+    return "打包成功:" .. apkpath
   else
     os.remove(tmp)
-    this.update("打包出错:\n "..table.concat(errbuffer,"\n"));
-    return "打包出错:\n "..table.concat(errbuffer,"\n")
+    this.update("打包出错:\n " .. table.concat(errbuffer, "\n"));
+    return "打包出错:\n " .. table.concat(errbuffer, "\n")
   end
 end
 
@@ -968,149 +1027,148 @@ function export(pdir)
   require "import"
   import "java.util.zip.*"
   import "java.io.*"
-  local function copy(input,output)
-    local b=byte[2^16]
-    local l=input.read(b)
-    while l>1 do
-      output.write(b,0,l)
-      l=input.read(b)
+  local function copy(input, output)
+    local b = byte[2 ^ 16]
+    local l = input.read(b)
+    while l > 1 do
+      output.write(b, 0, l)
+      l = input.read(b)
     end
     input.close()
   end
 
-  local f=File(pdir)
-  local date=os.date("%y%m%d%H%M%S")
-  local tmp=activity.getLuaExtDir("backup").."/"..f.Name.."_"..date..".alp"
-  local p={}
-  local e,s=pcall(loadfile(f.Path.."/init.lua","bt",p))
+  local f = File(pdir)
+  local date = os.date("%y%m%d%H%M%S")
+  local tmp = activity.getLuaExtDir("backup") .. "/" .. f.Name .. "_" .. date .. ".alp"
+  local p = {}
+  local e, s = pcall(loadfile(f.Path .. "/init.lua", "bt", p))
   if e then
-    if p.mode=="plugin" then
-      tmp=string.format("%s/%s_plugin_%s-%s.alp",activity.getLuaExtDir("backup"),p.appname,p.appver:gsub("%.","_"),date)
+    if p.mode == "plugin" then
+      tmp = string.format("%s/%s_plugin_%s-%s.alp", activity.getLuaExtDir("backup"), p.appname, p.appver:gsub("%.", "_"), date)
     else
-      tmp=string.format("%s/%s_%s-%s.alp",activity.getLuaExtDir("backup"),p.appname,p.appver:gsub("%.","_"),date)
+      tmp = string.format("%s/%s_%s-%s.alp", activity.getLuaExtDir("backup"), p.appname, p.appver:gsub("%.", "_"), date)
     end
   end
-  local out=ZipOutputStream(FileOutputStream(tmp))
+  local out = ZipOutputStream(FileOutputStream(tmp))
 
-  function addDir(out,dir,f)
-    local ls=f.listFiles()
+  function addDir(out, dir, f)
+    local ls = f.listFiles()
     --entry=ZipEntry(dir)
     --out.putNextEntry(entry)
-    for n=0,#ls-1 do
-      local name=ls[n].getName()
+    for n = 0, #ls - 1 do
+      local name = ls[n].getName()
       if name:find("%.apk$") or name:find("%.luac$") or name:find("^%.") then
-      elseif p.mode and name:find("%.lua$") and name~="init.lua" then
-        local path,err=console.build(ls[n].Path)
+      elseif p.mode and name:find("%.lua$") and name ~= "init.lua" then
+        local path, err = console.build(ls[n].Path)
         if path then
-          entry=ZipEntry(dir..name)
+          entry = ZipEntry(dir .. name)
           out.putNextEntry(entry)
-          copy(FileInputStream(File(path)),out)
+          copy(FileInputStream(File(path)), out)
           os.remove(path)
         else
           error(err)
         end
       elseif p.mode and name:find("%.aly$") then
-        name=name:gsub("aly$","lua")
-        local path,err=console.build_aly(ls[n].Path)
+        name = name:gsub("aly$", "lua")
+        local path, err = console.build_aly(ls[n].Path)
         if path then
-          entry=ZipEntry(dir..name)
+          entry = ZipEntry(dir .. name)
           out.putNextEntry(entry)
-          copy(FileInputStream(File(path)),out)
+          copy(FileInputStream(File(path)), out)
           os.remove(path)
         else
           error(err)
         end
       elseif ls[n].isDirectory() then
-        addDir(out,dir..name.."/",ls[n])
+        addDir(out, dir .. name .. "/", ls[n])
       else
-        entry=ZipEntry(dir..name)
+        entry = ZipEntry(dir .. name)
         out.putNextEntry(entry)
-        copy(FileInputStream(ls[n]),out)
+        copy(FileInputStream(ls[n]), out)
       end
     end
   end
 
-  addDir(out,"",f)
+  addDir(out, "", f)
   out.closeEntry()
   out.close()
   return tmp
 end
 
 function getalpinfo(path)
-  local app={}
-  loadstring(tostring(String(LuaUtil.readZip(path,"init.lua"))),"bt","bt",app)()
-  local str=string.format("名称: %s\
+  local app = {}
+  loadstring(tostring(String(LuaUtil.readZip(path, "init.lua"))), "bt", "bt", app)()
+  local str = string.format("名称: %s\
 版本: %s\
 包名: %s\
 作者: %s\
 说明: %s\
 路径: %s",
-  app.appname,
-  app.appver,
-  app.packagename,
-  app.developer,
-  app.description,
-  path
-  )
-  return str,app.mode
+    app.appname,
+    app.appver,
+    app.packagename,
+    app.developer,
+    app.description,
+    path)
+  return str, app.mode
 end
 
 function imports(path)
   create_imports_dlg()
   local mode
-  imports_dlg.Message,mode=getalpinfo(path)
-  if mode=="plugin" or path:match("^([^%._]+)_plugin") then
+  imports_dlg.Message, mode = getalpinfo(path)
+  if mode == "plugin" or path:match("^([^%._]+)_plugin") then
     imports_dlg.setTitle("导入插件")
-  elseif mode=="build" or path:match("^([^%._]+)_build") then
+  elseif mode == "build" or path:match("^([^%._]+)_build") then
     imports_dlg.setTitle("打包安装")
   end
   imports_dlg.show()
 end
 
-function importx(path,tp)
+function importx(path, tp)
   require "import"
   import "java.util.zip.*"
   import "java.io.*"
-  local function copy(input,output)
-    local b=byte[2^16]
-    local l=input.read(b)
-    while l>1 do
-      output.write(b,0,l)
-      l=input.read(b)
+  local function copy(input, output)
+    local b = byte[2 ^ 16]
+    local l = input.read(b)
+    while l > 1 do
+      output.write(b, 0, l)
+      l = input.read(b)
     end
     output.close()
   end
 
-  local f=File(path)
-  local app={}
-  loadstring(tostring(String(LuaUtil.readZip(path,"init.lua"))),"bt","bt",app)()
+  local f = File(path)
+  local app = {}
+  loadstring(tostring(String(LuaUtil.readZip(path, "init.lua"))), "bt", "bt", app)()
 
-  local s=app.appname or f.Name:match("^([^%._]+)")
-  local out=activity.getLuaExtDir("project").."/"..s
+  local s = app.appname or f.Name:match("^([^%._]+)")
+  local out = activity.getLuaExtDir("project") .. "/" .. s
 
-  if tp=="build" then
-    out=activity.getLuaExtDir("bin/.temp").."/"..s
-  elseif tp=="plugin" then
-    out=activity.getLuaExtDir("plugin").."/"..s
+  if tp == "build" then
+    out = activity.getLuaExtDir("bin/.temp") .. "/" .. s
+  elseif tp == "plugin" then
+    out = activity.getLuaExtDir("plugin") .. "/" .. s
   end
-  local d=File(out)
+  local d = File(out)
   if autorm then
-    local n=1
+    local n = 1
     while d.exists() do
-      n=n+1
-      d=File(out.."-"..n)
+      n = n + 1
+      d = File(out .. "-" .. n)
     end
   end
   if not d.exists() then
     d.mkdirs()
   end
-  out=out.."/"
-  local zip=ZipFile(f)
-  local entries=zip.entries()
+  out = out .. "/"
+  local zip = ZipFile(f)
+  local entries = zip.entries()
   for entry in enum(entries) do
-    local name=entry.Name
-    local tmp=File(out..name)
-    local pf=tmp.ParentFile
+    local name = entry.Name
+    local tmp = File(out .. name)
+    local pf = tmp.ParentFile
     if not pf.exists() then
       pf.mkdirs()
     end
@@ -1119,289 +1177,289 @@ function importx(path,tp)
         tmp.mkdirs()
       end
     else
-      copy(zip.getInputStream(entry),FileOutputStream(out..name))
+      copy(zip.getInputStream(entry), FileOutputStream(out .. name))
     end
   end
   zip.close()
   function callback2(s)
     LuaUtil.rmDir(File(activity.getLuaExtDir("bin/.temp")))
     bin_dlg.hide()
-    bin_dlg.Message=""
+    bin_dlg.Message = ""
     if not s:find("成功") then
       create_error_dlg()
-      error_dlg.Message=s
+      error_dlg.Message = s
       error_dlg.show()
     end
   end
 
-  if tp=="build" then
-    local p={}
-    local e,s=pcall(loadfile(out.."init.lua","bt",p))
+  if tp == "build" then
+    local p = {}
+    local e, s = pcall(loadfile(out .. "init.lua", "bt", p))
     if e then
-      activity.newTask(bin,update,callback2).execute{out,p.appname,p.appver,p.packagename,luabindir..p.appname.."_"..p.appver..".apk"}
+      activity.newTask(bin, update, callback2).execute { out, p.appname, p.appver, p.packagename, luabindir .. p.appname .. "_" .. p.appver .. ".apk" }
       create_bin_dlg()
       bin_dlg.show()
     else
-      Toast.makeText(activity, "工程配置文件错误."..s, Toast.LENGTH_SHORT ).show()
+      Toast.makeText(activity, "工程配置文件错误." .. s, Toast.LENGTH_SHORT).show()
     end
     return out
-  elseif tp=="plugin" then
-    Toast.makeText(activity, "导入插件."..s, Toast.LENGTH_SHORT ).show()
+  elseif tp == "plugin" then
+    Toast.makeText(activity, "导入插件." .. s, Toast.LENGTH_SHORT).show()
     return out
   end
-  luadir=out
-  luapath=luadir.."main.lua"
+  luadir = out
+  luapath = luadir .. "main.lua"
   read(luapath)
-  Toast.makeText(activity, "导入工程."..luadir, Toast.LENGTH_SHORT ).show()
+  Toast.makeText(activity, "导入工程." .. luadir, Toast.LENGTH_SHORT).show()
   return out
 end
 
-func={}
-func.open=function()
+func = {}
+func.open = function()
   save()
   create_open_dlg()
   list(listview, luadir)
   open_dlg.show()
 end
-func.new=function()
+func.new = function()
   save()
   create_create_dlg()
   create_dlg.setMessage(luadir)
   create_dlg.show()
 end
 
-func.history=function()
+func.history = function()
   save()
   create_open_dlg2()
   list2(listview2)
-  open_edit.Text=""
+  open_edit.Text = ""
   open_dlg2.show()
 end
-  
-func.create=function()
+
+func.create = function()
   save()
   create_project_dlg()
   project_dlg.show()
 end
-func.openproject=function()
+func.openproject = function()
   save()
   activity.newActivity("project")
---[[
-  create_open_dlg2()
-  list2(listview2, luaprojectdir)
-  open_edit.Text=""
-  open_dlg2.show()]]
+  --[[
+    create_open_dlg2()
+    list2(listview2, luaprojectdir)
+    open_edit.Text=""
+    open_dlg2.show()]]
 end
 
-func.export=function()
+func.export = function()
   save()
   if luaproject then
-    local name=export(luaproject)
-    Toast.makeText(activity, "工程已导出."..name, Toast.LENGTH_SHORT ).show()
+    local name = export(luaproject)
+    Toast.makeText(activity, "工程已导出." .. name, Toast.LENGTH_SHORT).show()
   else
-    Toast.makeText(activity, "仅支持工程导出.", Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "仅支持工程导出.", Toast.LENGTH_SHORT).show()
   end
 end
 
-func.save=function()
+func.save = function()
   save()
-  Toast.makeText(activity, "文件已保存."..luapath, Toast.LENGTH_SHORT ).show()
+  Toast.makeText(activity, "文件已保存." .. luapath, Toast.LENGTH_SHORT).show()
 end
 
-func.play=function()
+func.play = function()
   if func.check(true) then
     return
   end
   save()
   if luaproject then
-    activity.newActivity(luaproject.."main.lua")
+    activity.newActivity(luaproject .. "main.lua")
   else
     activity.newActivity(luapath)
   end
 end
-func.undo=function()
+func.undo = function()
   editor.undo()
 end
-func.redo=function()
+func.redo = function()
   editor.redo()
 end
-func.format=function()
+func.format = function()
   editor.format()
 end
-func.check= function (b)
-  local src=editor.getText()
-  src=src.toString()
+func.check = function(b)
+  local src = editor.getText()
+  src = src.toString()
   if luapath:find("%.aly$") then
-    src="return "..src
+    src = "return " .. src
   end
-  local _,data=loadstring(src)
+  local _, data = loadstring(src)
 
   if data then
-    local _,_,line,data=data:find(".(%d+).(.+)")
+    local _, _, line, data = data:find(".(%d+).(.+)")
     editor.gotoLine(tonumber(line))
-    Toast.makeText(activity,line..":".. data, Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, line .. ":" .. data, Toast.LENGTH_SHORT).show()
     return true
   elseif b then
   else
-    Toast.makeText(activity, "没有语法错误", Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "没有语法错误", Toast.LENGTH_SHORT).show()
   end
 end
 
-func.navi=function ()
+func.navi = function()
   create_navi_dlg()
-  local str=editor.getText().toString()
-  local fs={}
-  indexs={}
-  for s,i in str:gmatch("([%w%._]* *=? *function *[%w%._]*%b())()") do
-    i=utf8.len(str,1,i)-1
-    s=s:gsub("^ +","")
-    table.insert(fs,s)
-    table.insert(indexs,i)
-    fs[s]=i
+  local str = editor.getText().toString()
+  local fs = {}
+  indexs = {}
+  for s, i in str:gmatch("([%w%._]* *=? *function *[%w%._]*%b())()") do
+    i = utf8.len(str, 1, i) - 1
+    s = s:gsub("^ +", "")
+    table.insert(fs, s)
+    table.insert(indexs, i)
+    fs[s] = i
   end
-  local adapter=ArrayAdapter(activity,android.R.layout.simple_list_item_1, String(fs))
+  local adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, String(fs))
   navi_list.setAdapter(adapter)
   navi_dlg.show()
 end
 
-func.seach=function ()
+func.seach = function()
   editor.search()
 end
 
-func.gotoline=function ()
+func.gotoline = function()
   editor.gotoLine()
 end
 
-func.luac=function()
+func.luac = function()
   save()
-  local path,str=console.build(luapath)
+  local path, str = console.build(luapath)
   if path then
-    Toast.makeText(activity, "编译完成: "..path, Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "编译完成: " .. path, Toast.LENGTH_SHORT).show()
   else
-    Toast.makeText(activity, "编译出错: "..str, Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "编译出错: " .. str, Toast.LENGTH_SHORT).show()
   end
 end
 
-func.build=function()
+func.build = function()
   save()
   if not luaproject then
-    Toast.makeText(activity, "仅支持工程打包.", Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "仅支持工程打包.", Toast.LENGTH_SHORT).show()
     return
   end
 
-  local p={}
-  local e,s=pcall(loadfile(luaproject.."/init.lua","bt",p))
+  local p = {}
+  local e, s = pcall(loadfile(luaproject .. "/init.lua", "bt", p))
   if e then
-    activity.newTask(bin,update,callback).execute{luaproject,p.appname,p.appver,p.packagename,luabindir..p.appname.."_"..p.appver..".apk"}
+    activity.newTask(bin, update, callback).execute { luaproject, p.appname, p.appver, p.packagename, luabindir .. p.appname .. "_" .. p.appver .. ".apk" }
     create_bin_dlg()
     bin_dlg.show()
   else
-    Toast.makeText(activity, "工程配置文件错误."..s, Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "工程配置文件错误." .. s, Toast.LENGTH_SHORT).show()
   end
 end
 
-buildfile=function()
-  Toast.makeText(activity, "正在打包..", Toast.LENGTH_SHORT ).show()
-  task(bin,luaPath.getText().toString(),appName.getText().toString(),appVer.getText().toString(),packageName.getText().toString(),apkPath.getText().toString(),function(s)status.setText(s or "打包出错!")end)
+buildfile = function()
+  Toast.makeText(activity, "正在打包..", Toast.LENGTH_SHORT).show()
+  task(bin, luaPath.getText().toString(), appName.getText().toString(), appVer.getText().toString(), packageName.getText().toString(), apkPath.getText().toString(), function(s) status.setText(s or "打包出错!") end)
 end
 
-func.info=function()
+func.info = function()
   if not luaproject then
-    Toast.makeText(activity, "仅支持修改工程属性.", Toast.LENGTH_SHORT ).show()
+    Toast.makeText(activity, "仅支持修改工程属性.", Toast.LENGTH_SHORT).show()
     return
   end
-  activity.newActivity("projectinfo",{luaproject})
+  activity.newActivity("projectinfo", { luaproject })
 end
 
-func.logcat=function()
+func.logcat = function()
   activity.newActivity("logcat")
 end
 
-func.help=function()
+func.help = function()
   activity.newActivity("help")
 end
 
-func.java=function()
+func.java = function()
   activity.newActivity("javaapi/main")
 end
 
-func.manual=function()
+func.manual = function()
   activity.newActivity("luadoc")
 end
 
-func.helper=function()
+func.helper = function()
   save()
-  isupdate=true
-  activity.newActivity("layouthelper/main",{luaproject,luapath})
+  isupdate = true
+  activity.newActivity("layouthelper/main", { luaproject, luapath })
 end
 
-func.donation=function()
+func.donation = function()
   xpcall(function()
-    local url="alipayqr://platformapi/startapp?saId=10000007&clientVersion=3.7.0.0718&qrcode=https://qr.alipay.com/apt7ujjb4jngmu3z9a"
+    local url = "alipayqr://platformapi/startapp?saId=10000007&clientVersion=3.7.0.0718&qrcode=https://qr.alipay.com/apt7ujjb4jngmu3z9a"
     activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)));
   end,
-  function()
-    local url = "https://qr.alipay.com/apt7ujjb4jngmu3z9a";
-    activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-  end)
+    function()
+      local url = "https://qr.alipay.com/apt7ujjb4jngmu3z9a";
+      activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+    end)
 end
 
-key2=[[N_9Rrnm8jJcdcXs7TQsXQBVA8Liq8mhU]]
+key2 = [[N_9Rrnm8jJcdcXs7TQsXQBVA8Liq8mhU]]
 
-key=[[QRDW1jiyM81x-T8RMIgeX1g_v76QSo6a]]
+key = [[QRDW1jiyM81x-T8RMIgeX1g_v76QSo6a]]
 function joinQQGroup(key)
   import "android.content.Intent"
   import "android.net.Uri"
   local intent = Intent();
-  intent.setData(Uri.parse("mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26k%3D"..key));
+  intent.setData(Uri.parse("mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26k%3D" .. key));
   activity.startActivity(intent);
 end
 
-func.qq=function()
+func.qq = function()
   joinQQGroup(key)
 end
 
-func.about=function()
-  onVersionChanged("","")
-  end
+func.about = function()
+  onVersionChanged("", "")
+end
 
-func.plugin=function()
-  activity.newActivity("plugin/main",{luaproject,luapath})
+func.plugin = function()
+  activity.newActivity("plugin/main", { luaproject, luapath })
 end
 
 
-function onMenuItemSelected(id,item)
-  switch(item){
-    default=function()
+function onMenuItemSelected(id, item)
+  switch(item) {
+    default = function()
       print("功能开发中。。。")
     end,
-    [optmenu.play]=func.play,
-    [optmenu.undo]=func.undo,
-    [optmenu.redo]=func.redo,
-    [optmenu.file_open]=func.open,
-    [optmenu.file_history]=func.history,
-    [optmenu.file_save]=func.save,
-    [optmenu.file_new]=func.new,
-    [optmenu.file_build]=func.luac,
-    [optmenu.project_open]=func.openproject,
-    [optmenu.project_build]=func.build,
-    [optmenu.project_create]=func.create,
-    [optmenu.project_export]=func.export,
-    [optmenu.project_info]=func.info,
-    [optmenu.code_format]=func.format,
-    [optmenu.code_check]=func.check,
-    [optmenu.goto_line]=func.gotoline,
-    [optmenu.goto_func]=func.navi,
-    [optmenu.goto_seach]=func.seach,
-    [optmenu.more_helper]=func.helper,
-    [optmenu.more_logcat]=func.logcat,
-    [optmenu.more_java]=func.java,
-    [optmenu.more_help]=func.help,
-    [optmenu.more_manual]=func.manual,
-    [optmenu.more_donation]=func.donation,
-    [optmenu.more_qq]=func.qq,
-    [optmenu.more_about]=func.about,
-    [optmenu.plugin]=func.plugin,
+    [optmenu.play] = func.play,
+    [optmenu.undo] = func.undo,
+    [optmenu.redo] = func.redo,
+    [optmenu.file_open] = func.open,
+    [optmenu.file_history] = func.history,
+    [optmenu.file_save] = func.save,
+    [optmenu.file_new] = func.new,
+    [optmenu.file_build] = func.luac,
+    [optmenu.project_open] = func.openproject,
+    [optmenu.project_build] = func.build,
+    [optmenu.project_create] = func.create,
+    [optmenu.project_export] = func.export,
+    [optmenu.project_info] = func.info,
+    [optmenu.code_format] = func.format,
+    [optmenu.code_check] = func.check,
+    [optmenu.goto_line] = func.gotoline,
+    [optmenu.goto_func] = func.navi,
+    [optmenu.goto_seach] = func.seach,
+    [optmenu.more_helper] = func.helper,
+    [optmenu.more_logcat] = func.logcat,
+    [optmenu.more_java] = func.java,
+    [optmenu.more_help] = func.help,
+    [optmenu.more_manual] = func.manual,
+    [optmenu.more_donation] = func.donation,
+    [optmenu.more_qq] = func.qq,
+    [optmenu.more_about] = func.about,
+    [optmenu.plugin] = func.plugin,
   }
 end
 
@@ -1413,67 +1471,66 @@ function onCreate(s)
   if not s and uri and uri.getPath():find("%.alp$") then
     imports(uri.getPath())
   else]]
-  if pcall(read,luapath) then
-    last=last or 0
+  if pcall(read, luapath) then
+    last = last or 0
     if last < editor.getText().length() then
       editor.setSelection(last)
     end
   else
-    luapath=activity.LuaExtDir.."/new.lua"
-    if not pcall(read,luapath) then
-      write(luapath,code)
-      pcall(read,luapath)
+    luapath = activity.LuaExtDir .. "/new.lua"
+    if not pcall(read, luapath) then
+      write(luapath, code)
+      pcall(read, luapath)
     end
   end
   --end
 end
 
 function onNewIntent(intent)
-  local uri=intent.getData()
+  local uri = intent.getData()
   if uri and uri.getPath():find("%.alp$") then
     imports(uri.getPath())
   end
 end
 
-function onResult(name,path)
+function onResult(name, path)
   --print(name,path)
-  if name=="project" then
-  luadir=path.."/"
-  read(path.."/main.lua")
-  elseif name=="projectinfo" then
-  activity.setTitle(path)
+  if name == "project" then
+    luadir = path .. "/"
+    read(path .. "/main.lua")
+  elseif name == "projectinfo" then
+    activity.setTitle(path)
   end
 end
 
-function onActivityResult(req,res,intent)
-  if res==10000 then
+function onActivityResult(req, res, intent)
+  if res == 10000 then
     read(luapath)
     editor.format()
     return
   end
-  if res~=0 then
-    local data=intent.getStringExtra("data")
-    local _,_,path,line=data:find("\n[	 ]*([^\n]-):(%d+):")
-    if path==luapath then
-      editor.gotoLine (tonumber(line))
+  if res ~= 0 then
+    local data = intent.getStringExtra("data")
+    local _, _, path, line = data:find("\n[	 ]*([^\n]-):(%d+):")
+    if path == luapath then
+      editor.gotoLine(tonumber(line))
     end
-    local classes=require "javaapi.android"
-    local c=data:match("a nil value %(global '(%w+)'%)")
+    local classes = require "javaapi.android"
+    local c = data:match("a nil value %(global '(%w+)'%)")
     if c then
-      local cls={}
-      c="%."..c.."$"
-      for k,v in ipairs(classes) do
+      local cls = {}
+      c = "%." .. c .. "$"
+      for k, v in ipairs(classes) do
         if v:find(c) then
-          table.insert(cls,string.format("import %q",v))
+          table.insert(cls, string.format("import %q", v))
         end
       end
-      if #cls>0 then
+      if #cls > 0 then
         create_import_dlg()
         import_dlg.setItems(cls)
         import_dlg.show()
       end
     end
-
   end
 end
 
@@ -1482,17 +1539,17 @@ function onStart()
   if isupdate then
     editor.format()
   end
-  isupdate=false
+  isupdate = false
 end
 
 function onStop()
   save()
   --Toast.makeText(activity, "文件已保存."..luapath, Toast.LENGTH_SHORT ).show()
-  local f=io.open(luaconf,"wb")
-  f:write( string.format("luapath=%q\nlast=%d",luapath, editor. getSelectionEnd() ))
+  local f = io.open(luaconf, "wb")
+  f:write(string.format("luapath=%q\nlast=%d", luapath, editor.getSelectionEnd()))
   f:close()
-  local f=io.open(luahist,"wb")
-  f:write(string.format("history=%s",dump(history)))
+  local f = io.open(luahist, "wb")
+  f:write(string.format("history=%s", dump(history)))
   f:close()
 end
 
@@ -1501,11 +1558,11 @@ function create_navi_dlg()
   if navi_dlg then
     return
   end
-  navi_dlg=Dialog(activity)
+  navi_dlg = Dialog(activity)
   navi_dlg.setTitle("导航")
-  navi_list=ListView(activity)
-  navi_list.onItemClick=function(parent, v, pos,id)
-    editor.setSelection(indexs[pos+1])
+  navi_list = ListView(activity)
+  navi_list.onItemClick = function(parent, v, pos, id)
+    editor.setSelection(indexs[pos + 1])
     navi_dlg.hide()
   end
   navi_dlg.setContentView(navi_list)
@@ -1515,65 +1572,67 @@ function create_imports_dlg()
   if imports_dlg then
     return
   end
-  imports_dlg=AlertDialogBuilder(activity)
+  imports_dlg = AlertDialogBuilder(activity)
   imports_dlg.setTitle("导入")
-  imports_dlg.setPositiveButton("确定",{
-    onClick=function()
-      local path=imports_dlg.Message:match("路径: (.+)$")
-      if imports_dlg.Title=="打包安装" then
-        importx(path,"build")
+  imports_dlg.setPositiveButton("确定", {
+    onClick = function()
+      local path = imports_dlg.Message:match("路径: (.+)$")
+      if imports_dlg.Title == "打包安装" then
+        importx(path, "build")
         imports_dlg.setTitle("导入")
-      elseif imports_dlg.Title=="导入插件" then
-        importx(path,"plugin")
+      elseif imports_dlg.Title == "导入插件" then
+        importx(path, "plugin")
         imports_dlg.setTitle("导入")
       else
         importx(path)
       end
-    end})
-  imports_dlg.setNegativeButton("取消",nil)
+    end
+  })
+  imports_dlg.setNegativeButton("取消", nil)
 end
 
 function create_delete_dlg()
   if delete_dlg then
     return
   end
-  delete_dlg=AlertDialogBuilder(activity)
+  delete_dlg = AlertDialogBuilder(activity)
   delete_dlg.setTitle("删除")
-  delete_dlg.setPositiveButton("确定",{
-    onClick=function()
+  delete_dlg.setPositiveButton("确定", {
+    onClick = function()
       if luapath:find(delete_dlg.Message) then
-        Toast.makeText(activity, "不能删除正在打开的文件.", Toast.LENGTH_SHORT ).show()
+        Toast.makeText(activity, "不能删除正在打开的文件.", Toast.LENGTH_SHORT).show()
       elseif LuaUtil.rmDir(File(delete_dlg.Message)) then
-        Toast.makeText(activity, "已删除.", Toast.LENGTH_SHORT ).show()
-        list(listview,luadir)
+        Toast.makeText(activity, "已删除.", Toast.LENGTH_SHORT).show()
+        list(listview, luadir)
       else
-        Toast.makeText(activity, "删除失败.", Toast.LENGTH_SHORT ).show()
+        Toast.makeText(activity, "删除失败.", Toast.LENGTH_SHORT).show()
       end
-    end})
-  delete_dlg.setNegativeButton("取消",nil)
+    end
+  })
+  delete_dlg.setNegativeButton("取消", nil)
 end
 
 function create_open_dlg()
   if open_dlg then
     return
   end
-  open_dlg=AlertDialogBuilder(activity)
+  open_dlg = AlertDialogBuilder(activity)
   open_dlg.setTitle("打开")
-  open_title=TextView(activity)
-  listview=open_dlg.ListView
-  listview.FastScrollEnabled=true
+  open_title = TextView(activity)
+  listview = open_dlg.ListView
+  listview.FastScrollEnabled = true
 
   listview.addHeaderView(open_title)
-  listview.setOnItemClickListener(AdapterView.OnItemClickListener{
-    onItemClick=function(parent, v, pos,id)
+  listview.setOnItemClickListener(AdapterView.OnItemClickListener {
+    onItemClick = function(parent, v, pos, id)
       open(v.Text)
     end
   })
 
-  listview.onItemLongClick=function(parent, v, pos,id)
-    if v.Text~="../" then
+  listview.onItemLongClick = function(parent, v, pos, id)
+    if v.Text ~= "../" then
       create_delete_dlg()
-      delete_dlg.setMessage(luadir..v.Text)
+      delete_dlg.setMessage(luadir .. v.Text)
       delete_dlg.show()
     end
     return true
@@ -1587,40 +1646,40 @@ function create_open_dlg2()
   if open_dlg2 then
     return
   end
-  open_dlg2=AlertDialogBuilder(activity)
+  open_dlg2 = AlertDialogBuilder(activity)
   --open_dlg2.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
   open_dlg2.setTitle("最近打开")
   open_dlg2.setView(loadlayout(layout.open2))
 
   --listview2=open_dlg2.ListView
-  listview2.FastScrollEnabled=true
+  listview2.FastScrollEnabled = true
   --open_edit=EditText(activity)
   --listview2.addHeaderView(open_edit)
 
-  open_edit.addTextChangedListener{
-    onTextChanged=function(c)
-      local s=tostring(c)
-      if #s==0 then
+  open_edit.addTextChangedListener {
+    onTextChanged = function(c)
+      local s = tostring(c)
+      if #s == 0 then
         listview2.setAdapter(adapter(plist))
       end
-      local t={}
-      s=s:lower()
-      for k,v in ipairs(plist) do
-        if v:lower():find(s,1,true) then
-          table.insert(t,v)
+      local t = {}
+      s = s:lower()
+      for k, v in ipairs(plist) do
+        if v:lower():find(s, 1, true) then
+          table.insert(t, v)
         end
       end
       listview2.setAdapter(adapter(t))
     end
   }
 
-  listview2.setOnItemClickListener(AdapterView.OnItemClickListener{
-    onItemClick=function(parent, v, pos,id)
-      luadir=v.Text:gsub("[^/]+$","")
+  listview2.setOnItemClickListener(AdapterView.OnItemClickListener {
+    onItemClick = function(parent, v, pos, id)
+      luadir = v.Text:gsub("[^/]+$", "")
       read(v.Text)
       open_dlg2.hide()
-     end
+    end
   })
 end
 
@@ -1628,65 +1687,65 @@ function create_create_dlg()
   if create_dlg then
     return
   end
-  create_dlg=AlertDialogBuilder(activity)
+  create_dlg = AlertDialogBuilder(activity)
   create_dlg.setMessage(luadir)
   create_dlg.setTitle("新建")
-  create_e=EditText(activity)
+  create_e = EditText(activity)
   create_dlg.setView(create_e)
-  create_dlg.setPositiveButton(".lua",{onClick=create_lua})
-  create_dlg.setNegativeButton("取消",nil)
-  create_dlg.setNeutralButton(".aly",{onClick=create_aly})
+  create_dlg.setPositiveButton(".lua", { onClick = create_lua })
+  create_dlg.setNegativeButton("取消", nil)
+  create_dlg.setNeutralButton(".aly", { onClick = create_aly })
 end
 
 function create_project_dlg()
   if project_dlg then
     return
   end
-  project_dlg=AlertDialogBuilder(activity)
+  project_dlg = AlertDialogBuilder(activity)
   project_dlg.setTitle("新建工程")
   project_dlg.setView(loadlayout(layout.project))
-  project_dlg.setPositiveButton("确定",{onClick=create_project})
-  project_dlg.setNegativeButton("取消",nil)
+  project_dlg.setPositiveButton("确定", { onClick = create_project })
+  project_dlg.setNegativeButton("取消", nil)
 end
 
 function create_build_dlg()
   if build_dlg then
     return
   end
-  build_dlg=AlertDialogBuilder(activity)
+  build_dlg = AlertDialogBuilder(activity)
   build_dlg.setTitle("打包")
   build_dlg.setView(loadlayout(layout.build))
-  build_dlg.setPositiveButton("确定",{onClick=buildfile})
-  build_dlg.setNegativeButton("取消",nil)
+  build_dlg.setPositiveButton("确定", { onClick = buildfile })
+  build_dlg.setNegativeButton("取消", nil)
 end
 
 function create_bin_dlg()
   if bin_dlg then
     return
   end
-  bin_dlg=ProgressDialog(activity);
+  bin_dlg = ProgressDialog(activity);
   bin_dlg.setTitle("正在打包");
   bin_dlg.setMax(100);
 end
 
 import "android.content.*"
-cm=activity.getSystemService(activity.CLIPBOARD_SERVICE)
+cm = activity.getSystemService(activity.CLIPBOARD_SERVICE)
 
 function copyClip(str)
-  local cd = ClipData.newPlainText("label",str)
+  local cd = ClipData.newPlainText("label", str)
   cm.setPrimaryClip(cd)
-  Toast.makeText(activity,"已复制到剪切板",1000).show()
+  Toast.makeText(activity, "已复制到剪切板", 1000).show()
 end
 
 function create_import_dlg()
   if import_dlg then
     return
   end
-  import_dlg=AlertDialogBuilder(activity)
-  import_dlg.Title="可能需要导入的类"
-  import_dlg.setPositiveButton("确定",nil)
+  import_dlg = AlertDialogBuilder(activity)
+  import_dlg.Title = "可能需要导入的类"
+  import_dlg.setPositiveButton("确定", nil)
 
-  import_dlg.ListView.onItemLongClick=function(l,v)
+  import_dlg.ListView.onItemLongClick = function(l, v)
     copyClip(v.Text)
     return true
   end
@@ -1696,25 +1755,26 @@ function create_error_dlg()
   if error_dlg then
     return
   end
-  error_dlg=AlertDialogBuilder(activity)
-  error_dlg.Title="出错"
-  error_dlg.setPositiveButton("确定",nil)
+  error_dlg = AlertDialogBuilder(activity)
+  error_dlg.Title = "出错"
+  error_dlg.setPositiveButton("确定", nil)
 end
 
-lastclick=os.time()-2
+lastclick = os.time() - 2
 function onKeyDown(e)
-  local now=os.time()
-  if e==4 then
-    if now-lastclick>2 then
+  local now = os.time()
+  if e == 4 then
+    if now - lastclick > 2 then
       --print("再按一次退出程序")
-      Toast.makeText(activity, "再按一次退出程序.", Toast.LENGTH_SHORT ).show()
-      lastclick=now
+      Toast.makeText(activity, "再按一次退出程序.", Toast.LENGTH_SHORT).show()
+      lastclick = now
       return true
     end
   end
 end
-local cd1=ColorDrawable(0x00ffffff)
-local cd2=ColorDrawable(0x88000088)
+
+local cd1 = ColorDrawable(0x00ffffff)
+local cd2 = ColorDrawable(0x88000088)
 
 local pressed = android.R.attr.state_pressed;
 local window_focused = android.R.attr.state_window_focused;
@@ -1726,27 +1786,29 @@ function click(v)
 end
 
 function newButton(text)
-  local sd=StateListDrawable()
-  sd.addState({pressed},cd2)
-  sd.addState({0},cd1)
-  local btn=TextView()
-  btn.TextSize=20;
-  local pd=btn.TextSize/2
-  btn.setPadding(pd,pd/2,pd,pd/4)
-  btn.Text=text
+  local sd = StateListDrawable()
+  sd.addState({ pressed }, cd2)
+  sd.addState({ 0 }, cd1)
+  local btn = TextView()
+  btn.TextSize = 20;
+  local pd = btn.TextSize / 2
+  btn.setPadding(pd, pd / 2, pd, pd / 4)
+  btn.Text = text
   btn.setBackgroundDrawable(sd)
-  btn.onClick=click
+  btn.onClick = click
   return btn
 end
-local ps={"(",")","[","]","{","}","\"","=",":",".",",","_","+","-","*","/","\\","%","#","^","$","?","<",">","~",";","'"};
-for k,v in ipairs(ps) do
+
+local ps = { "(", ")", "[", "]", "{", "}", "\"", "=", ":", ".", ",", "_", "+", "-", "*", "/", "\\", "%", "#", "^", "$", "?", "<", ">", "~", ";", "'" };
+for k, v in ipairs(ps) do
   ps_bar.addView(newButton(v))
 end
 
 local function adds()
   require "import"
-  local classes=require "javaapi.android"
-  local ms={"onCreate",
+  local classes = require "javaapi.android"
+  local ms = {
+    "onCreate",
     "onStart",
     "onResume",
     "onPause",
@@ -1761,15 +1823,16 @@ local function adds()
     "onLongClick",
     "onItemClick",
   }
-  local buf=String[#ms+#classes]
-  for k,v in ipairs(ms) do
-    buf[k-1]=v
+  local buf = String[#ms + #classes]
+  for k, v in ipairs(ms) do
+    buf[k - 1] = v
   end
-  local l=#ms
-  for k,v in ipairs(classes) do
-    buf[l+k-1]=string.match(v,"%w+$")
+  local l = #ms
+  for k, v in ipairs(classes) do
+    buf[l + k - 1] = string.match(v, "%w+$")
   end
   return buf
 end
-task(adds,function(buf)editor.addNames(buf)end)
+
+task(adds, function(buf) editor.addNames(buf) end)
 

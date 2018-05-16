@@ -1,5 +1,7 @@
 package com.luajava;
 
+import java.util.*;
+import java.io.*;
 import java.util.Map.*;
 
 public class LuaTable<K, V> extends LuaObject implements Map<K, V> {

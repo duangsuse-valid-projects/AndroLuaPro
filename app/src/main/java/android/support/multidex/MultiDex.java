@@ -16,6 +16,10 @@
 
 package android.support.multidex;
 
+import java.util.*;
+import java.io.*;
+import java.lang.reflect.*;
+
 import android.content.*;
 import android.content.pm.*;
 import android.content.pm.PackageManager.*;

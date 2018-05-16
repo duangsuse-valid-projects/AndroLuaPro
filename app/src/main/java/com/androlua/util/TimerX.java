@@ -50,6 +50,9 @@ package com.androlua.util;
  * synchronization.
  */
 
+import java.util.*;
+import java.io.*;
+
 public class TimerX {
 
   private static long timerId;

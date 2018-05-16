@@ -1,5 +1,8 @@
 package com.myopicmobile.textwarrior.common;
 
+import java.util.*;
+import java.io.*;
+
 import android.app.*;
 import android.os.*;
 import com.androlua.*;

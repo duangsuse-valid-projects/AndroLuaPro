@@ -4,120 +4,122 @@ import "autotheme"
 
 activity.setTheme(autotheme())
 activity.setTitle("LogCat")
-items={"All","Lua","Test","Tcc","Error","Warning","Info","Debug","Verbose","Clear"}
+items = { "All", "Lua", "Test", "Tcc", "Error", "Warning", "Info", "Debug", "Verbose", "Clear" }
 function onCreateOptionsMenu(menu)
-  for k,v in ipairs(items) do
-    m=menu.add(v)
-    items[v]=m
+  for k, v in ipairs(items) do
+    local m = menu.add(v)
+    items[v] = m
   end
 end
 
-function onMenuItemSelected(id,item)
+function onMenuItemSelected(id, item)
   if func[item.getTitle()] then
     func[item.getTitle()]()
   else
-    print(item,"功能开发中。。。")
+    print(item, "功能开发中...")
   end
 end
 
 function readlog(s)
-  p=io.popen("logcat -d -v long "..s)
-  local s=p:read("*a")
+  local p = io.popen("logcat -d -v long " .. s)
+  local s = p:read("*a")
   p:close()
-  s=s:gsub("%-+ beginning of[^\n]*\n","")
-  if #s==0 then
-    s="<run the app to see its log output>"
-    end
+  s = s:gsub("%-+ beginning of[^\n]*\n", "")
+  if #s == 0 then
+    s = "<run the app to see its log output>"
+  end
   return s
 end
 
 function clearlog()
-  p=io.popen("logcat -c")
-  local s=p:read("*a")
+  local p = io.popen("logcat -c")
+  local s = p:read("*a")
   p:close()
   return s
 end
 
-func={}
-func.All=function()
+func = {}
+func.All = function()
   activity.setTitle("LogCat - All")
-  task(readlog,"",show)
+  task(readlog, "", show)
 end
-func.Lua=function()
+func.Lua = function()
   activity.setTitle("LogCat - Lua")
-  task(readlog,"lua:* *:S",show)
+  task(readlog, "lua:* *:S", show)
 end
-func.Test=function()
+func.Test = function()
   activity.setTitle("LogCat - Test")
-  task(readlog,"test:* *:S",show)
+  task(readlog, "test:* *:S", show)
 end
-func.Tcc=function()
+func.Tcc = function()
   activity.setTitle("LogCat - Tcc")
-  task(readlog,"tcc:* *:S",show)
+  task(readlog, "tcc:* *:S", show)
 end
-func.Error=function()
+func.Error = function()
   activity.setTitle("LogCat - Error")
-  task(readlog,"*:E",show)
+  task(readlog, "*:E", show)
 end
-func.Warning=function()
+func.Warning = function()
   activity.setTitle("LogCat - Warning")
-  task(readlog,"*:W",show)
+  task(readlog, "*:W", show)
 end
-func.Info=function()
+func.Info = function()
   activity.setTitle("LogCat - Info")
-  task(readlog,"*:I",show)
+  task(readlog, "*:I", show)
 end
-func.Debug=function()
+func.Debug = function()
   activity.setTitle("LogCat - Debug")
-  task(readlog,"*:D",show)
+  task(readlog, "*:D", show)
 end
-func.Verbose=function()
+func.Verbose = function()
   activity.setTitle("LogCat - Verbose")
-  task(readlog,"*:V",show)
+  task(readlog, "*:V", show)
 end
-func.Clear=function()
-  task(clearlog,show)
+func.Clear = function()
+  task(clearlog, show)
 end
 
-scroll=ScrollView(activity)
-scroll=ListView(activity)
+scroll = ScrollView(activity)
+scroll = ListView(activity)
 
-scroll.FastScrollEnabled=true
-logview=TextView(activity)
-logview.TextIsSelectable=true
+scroll.FastScrollEnabled = true
+logview = TextView(activity)
+logview.TextIsSelectable = true
 --scroll.addView(logview)
 --scroll.addHeaderView(logview)
-local r="%[ *%d+%-%d+ *%d+:%d+:%d+%.%d+ *%d+: *%d+ *%a/[^ ]+ *%]"
+local r = "%[ *%d+%-%d+ *%d+:%d+:%d+%.%d+ *%d+: *%d+ *%a/[^ ]+ *%]"
 
 function show(s)
- -- logview.setText(s)
+  --logview.setText(s)
   --print(s)
-  local a=LuaArrayAdapter(activity,{TextView,
-    textIsSelectable=true,
-    textSize="18sp",
-    })
-  local l=1
-  for i in s:gfind(r) do 
-    if l~=1 then
-     a.add(s:sub(l,i-1))
-     end
-     l=i
+  local a = LuaArrayAdapter(activity, {
+    TextView,
+    textIsSelectable = true,
+    textSize = "18sp",
+  })
+  local l = 1
+  for i in s:gfind(r) do
+    if l ~= 1 then
+      a.add(s:sub(l, i - 1))
     end
-       a.add(s:sub(l))
+    l = i
+  end
+  a.add(s:sub(l))
 
-   scroll.Adapter=a
+  scroll.Adapter = a
 end
 
 func.Lua()
 activity.setContentView(scroll)
 import "android.content.*"
-cm=activity.getSystemService(activity.CLIPBOARD_SERVICE)
+cm = activity.getSystemService(activity.CLIPBOARD_SERVICE)
 
 function copy(str)
-  local cd = ClipData.newPlainText("label",str)
+  local cd = ClipData.newPlainText("label", str)
   cm.setPrimaryClip(cd)
-  Toast.makeText(activity,"已复制的剪切板",1000).show()
+  Toast.makeText(activity, "已复制到剪切板", Toast.LENGTH_SHORT).show()
 end
+
 --[[
 scroll.onItemLongClick=function(l,v)
   local s=tostring(v.Text)
